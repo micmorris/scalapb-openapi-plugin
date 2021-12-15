@@ -1,8 +1,8 @@
-val Scala213 = "2.13.2"
+val Scala213 = "2.13.7"
 
-val Scala212 = "2.12.10"
+val Scala212 = "2.12.15"
 
-ThisBuild / organization := "com.example"
+ThisBuild / organization := "com.micmorris.scalapb"
 
 ThisBuild / scalaVersion := Scala213
 
@@ -39,20 +39,20 @@ lazy val e2e = (projectMatrix in file("e2e"))
   .enablePlugins(LocalCodeGenPlugin)
   .defaultAxes()
   .settings(
-    skip in publish := true,
+    publish / skip := true,
     codeGenClasspath := (codeGenJVM212 / Compile / fullClasspath).value,
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % "0.7.9" % Test
     ),
     testFrameworks += new TestFramework("munit.Framework"),
-    PB.targets in Compile := Seq(
-      scalapb.gen() -> (sourceManaged in Compile).value / "scalapb",
-      genModule("scalapb_openapi.compiler.CodeGenerator$") -> (sourceManaged in Compile).value / "scalapb"
+    Compile / PB.targets := Seq(
+      scalapb.gen() -> (Compile / sourceManaged).value / "scalapb",
+      genModule("scalapb_openapi.compiler.CodeGenerator$") -> (Compile / sourceManaged).value / "scalapb"
     )
   )
   .jvmPlatform(scalaVersions = Seq(Scala212, Scala213))
 
-lazy val root: Project =
+lazy val scalapbOpenapiGenRoot: Project =
   project
     .in(file("."))
     .settings(
